@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>和田玉器 - 玉出和田 温润千年</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --jade-white: #F5F1E8;
+      --jade-green: #5D8A66;
+      --jade-moss: #8B9A6B;
+      --jade-yellow: #C9A86C;
+      --jade-ink: #2C3E2D;
+      --jade-sugar: #B87333;
+      --bg-cream: #F9F6F0;
+      --bg-paper: #FFFEF9;
+      --text-ink: #2A2520;
+      --text-brown: #5C4A3D;
+      --text-gray: #8B8178;
+      --ease-jade: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Noto Sans SC', sans-serif;
+      background-color: var(--bg-cream);
+      color: var(--text-ink);
+      overflow-x: hidden;
+    }
+
+    .font-serif-cn {
+      font-family: 'Noto Serif SC', serif;
+    }
+
+    /* 进度条 */
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--jade-green), var(--jade-yellow), var(--jade-sugar));
+      z-index: 9999;
+      transition: width 0.15s;
+    }
+
+    /* 导航栏 */
+    .nav-scrolled {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 20px rgba(44, 62, 45, 0.08);
+    }
+
+    /* 玉石卡片 */
+    .jade-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      border: 1px solid rgba(201, 168, 108, 0.15);
+      box-shadow: 0 10px 40px rgba(92, 138, 102, 0.08), 0 2px 10px rgba(201, 168, 108, 0.05);
+      transition: all 0.5s var(--ease-jade);
+    }
+
+    .jade-card:hover {
+      box-shadow: 0 15px 50px rgba(92, 138, 102, 0.12), 0 5px 20px rgba(201, 168, 108, 0.1);
+      transform: translateY(-5px);
+    }
+
+    /* 渐变文字 */
+    .gradient-text {
+      background: linear-gradient(135deg, var(--jade-green) 0%, var(--jade-yellow) 50%, var(--jade-sugar) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* 动画 */
+    @keyframes float {
+      0%, 100% { transform: translateY(0) translateX(0); }
+      25% { transform: translateY(-15px) translateX(10px); }
+      50% { transform: translateY(-5px) translateX(-5px); }
+      75% { transform: translateY(-20px) translateX(5px); }
+    }
+
+    .animate-float {
+      animation: float 8s ease-in-out infinite;
+    }
+
+    .animate-float-delayed {
+      animation: float 8s ease-in-out infinite 2s;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .fade-in-up {
+      animation: fadeInUp 0.8s ease-out forwards;
+    }
+
+    /* 按钮样式 */
+    .btn-primary {
+      background-color: var(--jade-green);
+      color: white;
+      padding: 12px 32px;
+      border-radius: 50px;
+      font-weight: 500;
+      transition: all 0.3s var(--ease-jade);
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .btn-primary:hover {
+      background-color: #4A6B53;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(93, 138, 102, 0.3);
+    }
+
+    .btn-outline {
+      border: 2px solid var(--jade-yellow);
+      color: var(--jade-yellow);
+      padding: 12px 32px;
+      border-radius: 50px;
+      font-weight: 500;
+      transition: all 0.3s var(--ease-jade);
+      background: transparent;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .btn-outline:hover {
+      background: rgba(201, 168, 108, 0.1);
+    }
+
+    /* Section 容器 */
+    .section {
+      padding: 80px 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    @media (min-width: 768px) {
+      .section {
+        padding: 120px 48px;
+      }
+    }
+
+    /* 分隔线 */
+    .divider {
+      width: 96px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--jade-green), var(--jade-yellow), var(--jade-sugar));
+      border-radius: 50px;
+      margin: 16px auto 24px;
+    }
+
+    /* 玉种色块 */
+    .jade-color-block {
+      aspect-ratio: 1;
+      border-radius: 16px;
+      transition: all 0.5s var(--ease-jade);
+      cursor: pointer;
+    }
+
+    .jade-color-block:hover {
+      transform: scale(1.05);
+    }
+
+    /* 产品卡片 */
+    .product-card {
+      position: relative;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      border: 1px solid rgba(201, 168, 108, 0.15);
+      transition: all 0.5s var(--ease-jade);
+    }
+
+    .product-card:hover {
+      box-shadow: 0 20px 60px rgba(92, 138, 102, 0.15);
+      transform: translateY(-8px);
+    }
+
+    /* 输入框 */
+    .input-field {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid rgba(232, 228, 219, 1);
+      border-radius: 12px;
+      background: var(--bg-paper);
+      font-size: 14px;
+      transition: all 0.3s var(--ease-jade);
+      outline: none;
+    }
+
+    .input-field:focus {
+      border-color: var(--jade-green);
+      box-shadow: 0 0 0 3px rgba(93, 138, 102, 0.1);
+    }
+
+    /* 滚动条样式 */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-cream);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--jade-green);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--jade-moss);
+    }
+  </style>
+</head>
+<body>
+  <!-- 进度条 -->
+  <div class="progress-bar" id="progressBar"></div>
+
+  <!-- 导航栏 -->
+  <nav class="fixed top-0 left-0 right-0 z-50 transition-all duration-500" id="navbar">
+    <div class="max-w-7xl mx-auto px-6 flex items-center justify-between py-4">
+      <div class="font-bold text-xl font-serif-cn" style="color: var(--jade-ink);">
+        和田玉器
+      </div>
+      <div class="hidden lg:flex items-center gap-2">
+        <a href="#hero" class="nav-link px-4 py-2 text-sm rounded-full transition-all" data-section="hero">首页</a>
+        <a href="#culture" class="nav-link px-4 py-2 text-sm rounded-full transition-all" data-section="culture">玉文化</a>
+        <a href="#products" class="nav-link px-4 py-2 text-sm rounded-full transition-all" data-section="products">藏品鉴赏</a>
+        <a href="#process" class="nav-link px-4 py-2 text-sm rounded-full transition-all" data-section="process">工艺传承</a>
+        <a href="#contact" class="nav-link px-4 py-2 text-sm rounded-full transition-all" data-section="contact">联系我们</a>
+      </div>
+      <button class="lg:hidden p-2" onclick="toggleMobileMenu()" style="color: var(--jade-ink);">
+        <svg id="menuIcon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- 移动端菜单 -->
+  <div id="mobileMenu" class="fixed inset-0 z-40 lg:hidden transition-all duration-500" style="opacity: 0; pointer-events: none;">
+    <div class="absolute inset-0 bg-black/30 backdrop-blur-sm" onclick="toggleMobileMenu()"></div>
+    <div class="absolute top-16 left-4 right-4 bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl p-4" id="mobileMenuContent" style="transform: translateY(-16px); opacity: 0;">
+      <div class="grid grid-cols-2 gap-2">
+        <a href="#hero" class="px-4 py-3 text-sm rounded-xl text-center" style="color: var(--text-brown);" onclick="toggleMobileMenu()">首页</a>
+        <a href="#culture" class="px-4 py-3 text-sm rounded-xl text-center" style="color: var(--text-brown);" onclick="toggleMobileMenu()">玉文化</a>
+        <a href="#products" class="px-4 py-3 text-sm rounded-xl text-center" style="color: var(--text-brown);" onclick="toggleMobileMenu()">藏品鉴赏</a>
+        <a href="#process" class="px-4 py-3 text-sm rounded-xl text-center" style="color: var(--text-brown);" onclick="toggleMobileMenu()">工艺传承</a>
+        <a href="#contact" class="px-4 py-3 text-sm rounded-xl text-center col-span-2" style="color: var(--text-brown);" onclick="toggleMobileMenu()">联系我们</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <section id="hero" class="min-h-screen flex items-center justify-center relative overflow-hidden" style="background: var(--bg-cream);">
+    <!-- 背景装饰 -->
+    <div class="absolute top-20 right-10 w-96 h-96 rounded-full animate-float" style="background: radial-gradient(circle, rgba(93, 138, 102, 0.15), transparent); filter: blur(60px);"></div>
+    <div class="absolute bottom-20 left-10 w-80 h-80 rounded-full animate-float-delayed" style="background: radial-gradient(circle, rgba(201, 168, 108, 0.15), transparent); filter: blur(60px);"></div>
+    
+    <div class="section text-center relative z-10">
+      <h1 class="text-5xl md:text-7xl font-bold mb-4 font-serif-cn" style="color: var(--jade-ink);">
+        玉出和田
+      </h1>
+      <p class="text-3xl md:text-4xl font-light gradient-text mb-6 font-serif-cn">
+        温润千年 · 传世之珍
+      </p>
+      <p class="text-lg md:text-xl max-w-3xl mx-auto mb-10 leading-relaxed" style="color: var(--text-brown);">
+        八千年玉文化，始于昆仑，成于匠心<br/>
+        以玉载道，以器传神，承东方美学之魂
+      </p>
+      <div class="flex gap-6 justify-center flex-wrap">
+        <button class="btn-primary">藏品鉴赏</button>
+        <button class="btn-outline">了解玉文化</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Culture Section - 玉之五德 -->
+  <section id="culture" class="relative" style="background: var(--bg-paper);">
+    <div class="section">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-bold font-serif-cn" style="color: var(--jade-ink);">玉之五德</h2>
+        <div class="divider"></div>
+        <p class="text-xl" style="color: var(--text-brown);">许慎《说文解字》：玉，石之美者，有五德</p>
+      </div>
+
+      <!-- 五德 -->
+      <div class="grid md:grid-cols-5 gap-4 mb-16">
+        <div class="jade-card p-6 text-center">
+          <div class="text-5xl font-bold mb-2 opacity-20" style="color: var(--jade-green);">仁</div>
+          <h3 class="text-xl font-bold mb-2" style="color: var(--jade-ink);">仁</h3>
+          <p class="text-sm mb-1" style="color: var(--text-brown);">润泽以温，仁之方也</p>
+          <p class="text-xs" style="color: var(--text-gray);">玉石温润如君子之仁德</p>
+        </div>
+        <div class="jade-card p-6 text-center">
+          <div class="text-5xl font-bold mb-2 opacity-20" style="color: var(--jade-green);">义</div>
+          <h3 class="text-xl font-bold mb-2" style="color: var(--jade-ink);">义</h3>
+          <p class="text-sm mb-1" style="color: var(--text-brown);">勰理自外，可以知中</p>
+          <p class="text-xs" style="color: var(--text-gray);">表里如一，正直不阿</p>
+        </div>
+        <div class="jade-card p-6 text-center">
+          <div class="text-5xl font-bold mb-2 opacity-20" style="color: var(--jade-green);">智</div>
+          <h3 class="text-xl font-bold mb-2" style="color: var(--jade-ink);">智</h3>
+          <p class="text-sm mb-1" style="color: var(--text-brown);">其声舒扬，专以远闻</p>
+          <p class="text-xs" style="color: var(--text-gray);">声音清越，智慧深远</p>
+        </div>
+        <div class="jade-card p-6 text-center">
+          <div class="text-5xl font-bold mb-2 opacity-20" style="color: var(--jade-green);">勇</div>
+          <h3 class="text-xl font-bold mb-2" style="color: var(--jade-ink);">勇</h3>
+          <p class="text-sm mb-1" style="color: var(--text-brown);">不挠而折，勇之方也</p>
+          <p class="text-xs" style="color: var(--text-gray);">坚韧刚毅，不畏艰难</p>
+        </div>
+        <div class="jade-card p-6 text-center">
+          <div class="text-5xl font-bold mb-2 opacity-20" style="color: var(--jade-green);">洁</div>
+          <h3 class="text-xl font-bold mb-2" style="color: var(--jade-ink);">洁</h3>
+          <p class="text-sm mb-1" style="color: var(--text-brown);">锐廉而不忮，洁之方也</p>
+          <p class="text-xs" style="color: var(--text-gray);">廉洁清正，不染尘埃</p>
+        </div>
+      </div>
+
+      <!-- 玉种展示 -->
+      <div class="text-center mb-12">
+        <h3 class="text-3xl font-bold font-serif-cn" style="color: var(--jade-ink);">和田玉种</h3>
+        <p class="text-lg mt-2" style="color: var(--text-brown);">天地精华，各有千秋</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="group cursor-pointer">
+          <div class="jade-color-block mb-4" style="background: linear-gradient(135deg, #F5F1E8, #E8E4DB); box-shadow: 0 10px 30px rgba(245, 241, 232, 0.5);"></div>
+          <h4 class="text-xl font-bold font-serif-cn mb-2" style="color: var(--jade-ink);">白玉 · 羊脂白</h4>
+          <p class="text-sm mb-2" style="color: var(--text-brown);">色若羊脂，质地细腻温润，为和田玉中的极品</p>
+          <p class="text-xs italic" style="color: var(--text-gray);">如凝脂，似凝霜，触手生温</p>
+        </div>
+        <div class="group cursor-pointer">
+          <div class="jade-color-block mb-4" style="background: linear-gradient(135deg, #5D8A66, #4A6B53); box-shadow: 0 10px 30px rgba(93, 138, 102, 0.4);"></div>
+          <h4 class="text-xl font-bold font-serif-cn mb-2" style="color: var(--jade-ink);">青玉 · 碧翠</h4>
+          <p class="text-sm mb-2" style="color: var(--text-brown);">青翠欲滴，沉稳厚重，寓意生命力与希望</p>
+          <p class="text-xs italic" style="color: var(--text-gray);">如春水初生，碧波荡漾</p>
+        </div>
+        <div class="group cursor-pointer">
+          <div class="jade-color-block mb-4" style="background: linear-gradient(135deg, #C9A86C, #A88B4A); box-shadow: 0 10px 30px rgba(201, 168, 108, 0.4);"></div>
+          <h4 class="text-xl font-bold font-serif-cn mb-2" style="color: var(--jade-ink);">黄玉 · 金黄</h4>
+          <p class="text-sm mb-2" style="color: var(--text-brown);">金光灿烂，尊贵典雅，象征财富与地位</p>
+          <p class="text-xs italic" style="color: var(--text-gray);">如秋日暖阳，温润华贵</p>
+        </div>
+        <div class="group cursor-pointer">
+          <div class="jade-color-block mb-4" style="background: linear-gradient(135deg, #2C3E2D, #1F2D20); box-shadow: 0 10px 30px rgba(44, 62, 45, 0.4);"></div>
+          <h4 class="text-xl font-bold font-serif-cn mb-2" style="color: var(--jade-ink);">墨玉 · 深墨</h4>
+          <p class="text-sm mb-2" style="color: var(--text-brown);">漆黑如墨，质地致密，沉稳神秘</p>
+          <p class="text-xs italic" style="color: var(--text-gray);">如夜空深邃，内敛沉稳</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Products Section - 藏品鉴赏 -->
+  <section id="products" style="background: var(--jade-white);">
+    <div class="section">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-bold font-serif-cn" style="color: var(--jade-ink);">藏品鉴赏</h2>
+        <div class="divider"></div>
+        <p class="text-xl" style="color: var(--text-brown);">匠心独运，传世之作</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- 产品1 -->
+        <div class="product-card">
+          <div class="aspect-[4/3] relative overflow-hidden" style="background: linear-gradient(135deg, #F5F1E8, #E8E4DB);">
+            <div class="absolute inset-0 flex items-center justify-center opacity-30" style="color: var(--jade-green);">
+              <div class="text-center">
+                <div class="text-6xl mb-2 font-serif-cn">玉</div>
+                <div class="text-sm">观世音菩萨像，面容慈祥，衣纹流畅</div>
+              </div>
+            </div>
+            <div class="absolute top-4 right-4">
+              <span class="px-3 py-1 rounded-full text-xs font-medium text-white" style="background: var(--jade-green);">挂件</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-2 font-serif-cn" style="color: var(--jade-ink);">羊脂玉观音挂件</h3>
+            <p class="text-sm mb-3" style="color: var(--text-gray);">和田白玉</p>
+            <p class="text-sm mb-4" style="color: var(--text-brown);">精雕观音法相，慈悲庄严</p>
+            <div class="flex items-center justify-between">
+              <span class="text-2xl font-bold gradient-text">¥ 128,000</span>
+              <button class="btn-primary text-sm py-2 px-4">查看详情</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 产品2 -->
+        <div class="product-card">
+          <div class="aspect-[4/3] relative overflow-hidden" style="background: linear-gradient(135deg, #5D8A66, #4A6B53);">
+            <div class="absolute inset-0 flex items-center justify-center opacity-30 text-white">
+              <div class="text-center">
+                <div class="text-6xl mb-2 font-serif-cn">玉</div>
+                <div class="text-sm">龙凤呈祥，龙首昂扬，凤羽华美</div>
+              </div>
+            </div>
+            <div class="absolute top-4 right-4">
+              <span class="px-3 py-1 rounded-full text-xs font-medium text-white" style="background: rgba(255,255,255,0.2);">摆件</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-2 font-serif-cn" style="color: var(--jade-ink);">青玉龙凤呈祥摆件</h3>
+            <p class="text-sm mb-3" style="color: var(--text-gray);">和田青玉</p>
+            <p class="text-sm mb-4" style="color: var(--text-brown);">龙凤交颈，寓意吉祥如意</p>
+            <div class="flex items-center justify-between">
+              <span class="text-2xl font-bold gradient-text">¥ 268,000</span>
+              <button class="btn-primary text-sm py-2 px-4">查看详情</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 产品3 -->
+        <div class="product-card">
+          <div class="aspect-[4/3] relative overflow-hidden" style="background: linear-gradient(135deg, #C9A86C, #A88B4A);">
+            <div class="absolute inset-0 flex items-center justify-center opacity-30 text-white">
+              <div class="text-center">
+                <div class="text-6xl mb-2 font-serif-cn">玉</div>
+                <div class="text-sm">圆形玉璧，中间圆孔，线条简洁</div>
+              </div>
+            </div>
+            <div class="absolute top-4 right-4">
+              <span class="px-3 py-1 rounded-full text-xs font-medium text-white" style="background: rgba(255,255,255,0.2);">挂件</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-2 font-serif-cn" style="color: var(--jade-ink);">黄玉平安扣</h3>
+            <p class="text-sm mb-3" style="color: var(--text-gray);">和田黄玉</p>
+            <p class="text-sm mb-4" style="color: var(--text-brown);">圆满造型，祈愿平安顺遂</p>
+            <div class="flex items-center justify-between">
+              <span class="text-2xl font-bold gradient-text">¥ 58,000</span>
+              <button class="btn-primary text-sm py-2 px-4">查看详情</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 产品4 -->
+        <div class="product-card">
+          <div class="aspect-[4/3] relative overflow-hidden" style="background: linear-gradient(135deg, #2C3E2D, #1F2D20);">
+            <div class="absolute inset-0 flex items-center justify-center opacity-30 text-white">
+              <div class="text-center">
+                <div class="text-6xl mb-2 font-serif-cn">玉</div>
+                <div class="text-sm">山水画卷，峰峦叠嶂，云雾缭绕</div>
+              </div>
+            </div>
+            <div class="absolute top-4 right-4">
+              <span class="px-3 py-1 rounded-full text-xs font-medium text-white" style="background: rgba(255,255,255,0.2);">牌件</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-2 font-serif-cn" style="color: var(--jade-ink);">墨玉山水牌</h3>
+            <p class="text-sm mb-3" style="color: var(--text-gray);">和田墨玉</p>
+            <p class="text-sm mb-4" style="color: var(--text-brown);">微雕山水，意境深远</p>
+            <div class="flex items-center justify-between">
+              <span class="text-2xl font-bold gradient-text">¥ 188,000</span>
+              <button class="btn-primary text-sm py-2 px-4">查看详情</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 产品5 -->
+        <div class="product-card">
+          <div class="aspect-[4/3] relative overflow-hidden" style="background: linear-gradient(135deg, #8B9A6B, #6B7A4B);">
+            <div class="absolute inset-0 flex items-center justify-center opacity-30 text-white">
+              <div class="text-center">
+                <div class="text-6xl mb-2 font-serif-cn">玉</div>
+                <div class="text-sm">圆环手镯，色泽碧绿，晶莹剔透</div>
+              </div>
+            </div>
+            <div class="absolute top-4 right-4">
+              <span class="px-3 py-1 rounded-full text-xs font-medium text-white" style="background: rgba(255,255,255,0.2);">饰品</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-2 font-serif-cn" style="color: var(--jade-ink);">碧玉手镯</h3>
+            <p class="text-sm mb-3" style="color: var(--text-gray);">和田碧玉</p>
+            <p class="text-sm mb-4" style="color: var(--text-brown);">浑然天成，温润通透</p>
+            <div class="flex items-center justify-between">
+              <span class="text-2xl font-bold gradient-text">¥ 98,000</span>
+              <button class="btn-primary text-sm py-2 px-4">查看详情</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 产品6 -->
+        <div class="product-card">
+          <div class="aspect-[4/3] relative overflow-hidden" style="background: linear-gradient(135deg, #B87333, #9A5E2A);">
+            <div class="absolute inset-0 flex items-center justify-center opacity-30 text-white">
+              <div class="text-center">
+                <div class="text-6xl mb-2 font-serif-cn">玉</div>
+                <div class="text-sm">貔貅蹲坐，神态威武，肌肉饱满</div>
+              </div>
+            </div>
+            <div class="absolute top-4 right-4">
+              <span class="px-3 py-1 rounded-full text-xs font-medium text-white" style="background: rgba(255,255,255,0.2);">摆件</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-2 font-serif-cn" style="color: var(--jade-ink);">糖玉貔貅摆件</h3>
+            <p class="text-sm mb-3" style="color: var(--text-gray);">和田糖玉</p>
+            <p class="text-sm mb-4" style="color: var(--text-brown);">瑞兽镇宅，招财进宝</p>
+            <div class="flex items-center justify-between">
+              <span class="text-2xl font-bold gradient-text">¥ 158,000</span>
+              <button class="btn-primary text-sm py-2 px-4">查看详情</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Process Section - 工艺传承 -->
+  <section id="process" style="background: var(--bg-paper);">
+    <div class="section">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-bold font-serif-cn" style="color: var(--jade-ink);">工艺传承</h2>
+        <div class="divider"></div>
+        <p class="text-xl" style="color: var(--text-brown);">每一块玉，都承载着匠人的心血与灵魂</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+        <div class="text-center group">
+          <div class="w-24 h-24 mx-auto mb-6 rounded-full flex items-center justify-center transition-all duration-500 group-hover:scale-110" style="background: linear-gradient(135deg, var(--jade-green), var(--jade-moss)); box-shadow: 0 10px 30px rgba(93, 138, 102, 0.3);">
+            <span class="text-4xl">💎</span>
+          </div>
+          <div class="text-sm font-bold mb-2 tracking-wider" style="color: var(--jade-yellow);">01</div>
+          <h3 class="text-2xl font-bold mb-3 font-serif-cn" style="color: var(--jade-ink);">选料</h3>
+          <p class="text-sm" style="color: var(--text-brown);">严选和田籽料，观其形、察其色、辨其质</p>
+        </div>
+
+        <div class="text-center group">
+          <div class="w-24 h-24 mx-auto mb-6 rounded-full flex items-center justify-center transition-all duration-500 group-hover:scale-110" style="background: linear-gradient(135deg, var(--jade-green), var(--jade-moss)); box-shadow: 0 10px 30px rgba(93, 138, 102, 0.3);">
+            <span class="text-4xl">✏️</span>
+          </div>
+          <div class="text-sm font-bold mb-2 tracking-wider" style="color: var(--jade-yellow);">02</div>
+          <h3 class="text-2xl font-bold mb-3 font-serif-cn" style="color: var(--jade-ink);">设计</h3>
+          <p class="text-sm" style="color: var(--text-brown);">因材施艺，构思巧妙，传承千年玉雕精髓</p>
+        </div>
+
+        <div class="text-center group">
+          <div class="w-24 h-24 mx-auto mb-6 rounded-full flex items-center justify-center transition-all duration-500 group-hover:scale-110" style="background: linear-gradient(135deg, var(--jade-green), var(--jade-moss)); box-shadow: 0 10px 30px rgba(93, 138, 102, 0.3);">
+            <span class="text-4xl">🔪</span>
+          </div>
+          <div class="text-sm font-bold mb-2 tracking-wider" style="color: var(--jade-yellow);">03</div>
+          <h3 class="text-2xl font-bold mb-3 font-serif-cn" style="color: var(--jade-ink);">雕刻</h3>
+          <p class="text-sm" style="color: var(--text-brown);">精雕细琢，刀工娴熟，注入匠人心血</p>
+        </div>
+
+        <div class="text-center group">
+          <div class="w-24 h-24 mx-auto mb-6 rounded-full flex items-center justify-center transition-all duration-500 group-hover:scale-110" style="background: linear-gradient(135deg, var(--jade-green), var(--jade-moss)); box-shadow: 0 10px 30px rgba(93, 138, 102, 0.3);">
+            <span class="text-4xl">✨</span>
+          </div>
+          <div class="text-sm font-bold mb-2 tracking-wider" style="color: var(--jade-yellow);">04</div>
+          <h3 class="text-2xl font-bold mb-3 font-serif-cn" style="color: var(--jade-ink);">打磨</h3>
+          <p class="text-sm" style="color: var(--text-brown);">细致打磨，层层抛光，温润如脂</p>
+        </div>
+      </div>
+
+      <!-- 匠心传承 -->
+      <div class="jade-card p-8 max-w-4xl mx-auto">
+        <div class="grid md:grid-cols-2 gap-8 items-center">
+          <div>
+            <h3 class="text-3xl font-bold mb-4 font-serif-cn" style="color: var(--jade-ink);">百年传承 · 匠心独运</h3>
+            <p class="text-base leading-relaxed mb-4" style="color: var(--text-brown);">
+              我们的玉雕大师传承三代技艺，每一件作品都经过数月乃至数年的精心雕琢。从选料到成品，每一个环节都凝聚着匠人对完美的追求。
+            </p>
+            <p class="text-base leading-relaxed" style="color: var(--text-brown);">
+              我们坚持传统手工雕刻，保留玉石的天然灵性，让每一件作品都成为独一无二的艺术珍品。
+            </p>
+          </div>
+          <div class="aspect-video rounded-xl flex items-center justify-center text-6xl" style="background: linear-gradient(135deg, #F5F1E8, #E8E4DB);">
+            🎨
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" style="background: var(--jade-white);">
+    <div class="section">
+      <div class="text-center mb-12">
+        <h2 class="text-4xl md:text-5xl font-bold font-serif-cn" style="color: var(--jade-ink);">联系我们</h2>
+        <div class="divider"></div>
+        <p class="text-xl" style="color: var(--text-brown);">期待与您共赏美玉，传承文化</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        <!-- 联系信息 -->
+        <div class="jade-card p-8">
+          <h3 class="text-2xl font-bold mb-6 font-serif-cn" style="color: var(--jade-ink);">联系方式</h3>
+          <div class="space-y-6">
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style="background: rgba(93, 138, 102, 0.15);">
+                <span class="text-2xl">📍</span>
+              </div>
+              <div>
+                <h4 class="font-bold mb-1" style="color: var(--jade-ink);">展厅地址</h4>
+                <p class="text-sm" style="color: var(--text-brown);">
+                  新疆和田市玉石交易中心A座3层<br/>
+                  北京市朝阳区文化艺术中心B馆
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style="background: rgba(201, 168, 108, 0.15);">
+                <span class="text-2xl">📞</span>
+              </div>
+              <div>
+                <h4 class="font-bold mb-1" style="color: var(--jade-ink);">咨询热线</h4>
+                <p class="text-sm" style="color: var(--text-brown);">
+                  400-888-6666<br/>
+                  工作时间：9:00 - 18:00
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style="background: rgba(184, 115, 51, 0.15);">
+                <span class="text-2xl">✉️</span>
+              </div>
+              <div>
+                <h4 class="font-bold mb-1" style="color: var(--jade-ink);">电子邮箱</h4>
+                <p class="text-sm" style="color: var(--text-brown);">
+                  info@hetianyu.com<br/>
+                  service@hetianyu.com
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 预约表单 -->
+        <div class="jade-card p-8">
+          <h3 class="text-2xl font-bold mb-6 font-serif-cn" style="color: var(--jade-ink);">预约鉴赏</h3>
+          <div class="space-y-4">
+            <div>
+              <label class="text-sm font-medium mb-2 block" style="color: var(--text-brown);">您的姓名</label>
+              <input type="text" placeholder="请输入姓名" class="input-field" />
+            </div>
+            <div>
+              <label class="text-sm font-medium mb-2 block" style="color: var(--text-brown);">联系电话</label>
+              <input type="tel" placeholder="请输入联系电话" class="input-field" />
+            </div>
+            <div>
+              <label class="text-sm font-medium mb-2 block" style="color: var(--text-brown);">预约时间</label>
+              <input type="date" class="input-field" />
+            </div>
+            <div>
+              <label class="text-sm font-medium mb-2 block" style="color: var(--text-brown);">意向藏品</label>
+              <select class="input-field">
+                <option value="">请选择玉种</option>
+                <option value="white">白玉</option>
+                <option value="green">青玉</option>
+                <option value="yellow">黄玉</option>
+                <option value="ink">墨玉</option>
+                <option value="other">其他</option>
+              </select>
+            </div>
+            <button class="btn-primary w-full py-4 text-lg">提交预约</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="background: var(--jade-ink);">
+    <div class="max-w-6xl mx-auto px-6 py-12">
+      <div class="grid md:grid-cols-3 gap-8 mb-8">
+        <div>
+          <h3 class="text-2xl font-bold text-white mb-4 font-serif-cn">和田玉器</h3>
+          <p class="text-sm leading-relaxed" style="color: rgba(245, 241, 232, 0.8);">
+            传承八千年玉文化<br/>
+            以匠心致敬经典<br/>
+            以美玉承载文化
+          </p>
+        </div>
+        <div>
+          <h4 class="text-lg font-bold text-white mb-4">快速链接</h4>
+          <div class="space-y-2">
+            <a href="#products" class="block text-sm transition-opacity hover:opacity-80" style="color: rgba(245, 241, 232, 0.8);">藏品鉴赏</a>
+            <a href="#culture" class="block text-sm transition-opacity hover:opacity-80" style="color: rgba(245, 241, 232, 0.8);">玉文化</a>
+            <a href="#process" class="block text-sm transition-opacity hover:opacity-80" style="color: rgba(245, 241, 232, 0.8);">工艺传承</a>
+            <a href="#contact" class="block text-sm transition-opacity hover:opacity-80" style="color: rgba(245, 241, 232, 0.8);">联系我们</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="text-lg font-bold text-white mb-4">关注我们</h4>
+          <p class="text-sm mb-4" style="color: rgba(245, 241, 232, 0.8);">
+            扫描二维码，关注公众号<br/>
+            获取最新藏品资讯
+          </p>
+          <div class="w-24 h-24 rounded-lg flex items-center justify-center text-xs" style="background: rgba(255, 255, 255, 0.1); color: rgba(245, 241, 232, 0.8);">
+            二维码
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-8 text-center text-sm" style="border-top: 1px solid rgba(255, 255, 255, 0.1); color: rgba(245, 241, 232, 0.6);">
+        <p>© 2026 和田玉器. 传承千年玉文化 · 匠心铸就传世珍品</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // GSAP 注册
+    gsap.registerPlugin(ScrollTrigger);
+
+    // 进度条
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = (scrollTop / docHeight) * 100;
+      document.getElementById('progressBar').style.width = Math.min(progress, 100) + '%';
+    });
+
+    // 导航栏滚动效果
+    window.addEventListener('scroll', () => {
+      const navbar = document.getElementById('navbar');
+      if (window.scrollY > 100) {
+        navbar.classList.add('nav-scrolled');
+        navbar.style.paddingTop = '12px';
+        navbar.style.paddingBottom = '12px';
+        document.querySelectorAll('.nav-link').forEach(link => {
+          link.style.color = 'var(--text-brown)';
+        });
+      } else {
+        navbar.classList.remove('nav-scrolled');
+        navbar.style.paddingTop = '20px';
+        navbar.style.paddingBottom = '20px';
+        document.querySelectorAll('.nav-link').forEach(link => {
+          link.style.color = 'var(--text-brown)';
+        });
+      }
+    });
+
+    // 移动端菜单
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobileMenu');
+      const content = document.getElementById('mobileMenuContent');
+      
+      if (menu.style.opacity === '1') {
+        menu.style.opacity = '0';
+        menu.style.pointerEvents = 'none';
+        content.style.transform = 'translateY(-16px)';
+        content.style.opacity = '0';
+      } else {
+        menu.style.opacity = '1';
+        menu.style.pointerEvents = 'auto';
+        setTimeout(() => {
+          content.style.transform = 'translateY(0)';
+          content.style.opacity = '1';
+        }, 100);
+      }
+    }
+
+    // 入场动画
+    gsap.utils.toArray('section').forEach(section => {
+      gsap.fromTo(section.querySelectorAll('h2, h3, p, .jade-card, .product-card, .divider'),
+        { y: 50, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          ease: 'power2.out',
+          stagger: 0.1,
+          scrollTrigger: {
+            trigger: section,
+            start: 'top 70%',
+            toggleActions: 'play none none none'
+          }
+        }
+      );
+    });
+
+    // 平滑滚动
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
